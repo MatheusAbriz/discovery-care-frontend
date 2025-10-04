@@ -11,6 +11,7 @@ const AddCar = () => {
     const loading = useLoader(isLoading);
     const [carData, setCarData] = useState({
         vin: '',
+        origin: '',
         destination: '',
         make: '',
         model: '',
@@ -34,6 +35,7 @@ const AddCar = () => {
             // Reset form
             setCarData({
                 vin: '',
+                origin: '',
                 destination: '',
                 make: '',
                 model: '',
@@ -65,6 +67,21 @@ const AddCar = () => {
                                 placeholder="Type vin here..."
                                 value={carData.vin}
                                 onChange={(e) => handleChange('vin', e.target.value)}
+                                className="w-full px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all duration-200"
+                                required
+                            />
+                        </div>
+
+                        {/* Origin Field */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-semibold text-amber-600 uppercase tracking-wide">
+                                📍 Origin
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Type origin here..."
+                                value={carData.origin}
+                                onChange={(e) => handleChange('origin', e.target.value)}
                                 className="w-full px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all duration-200"
                                 required
                             />
