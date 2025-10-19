@@ -11,6 +11,7 @@ import DeleteCar from './pages/DeleteCar';
 import { AuthProvider } from './context/authContext';
 import { ProtectedRoute } from './Guard/protectedRoute';
 import AddUser from './pages/AddUser';
+import DeliveriesDetails from './pages/DeliveryDetails';
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(<>
@@ -27,6 +28,8 @@ createRoot(document.getElementById('root')!).render(<>
           <Route path="/deleteCar" element={<DeleteCar/>}/>
 
           <Route path="/addUser" element={<AddUser/>}/>
+
+          <Route path="/deliveryDetails" element={<DeliveriesDetails/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

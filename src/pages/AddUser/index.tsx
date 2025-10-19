@@ -45,7 +45,6 @@ const AddUser = () => {
 
         setIsLoading(true);
         try {
-            console.log(userData)
             await insertUser(userData);
             toast.success("User added successfully!");
 
