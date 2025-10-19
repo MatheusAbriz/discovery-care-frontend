@@ -19,9 +19,9 @@ export const Header = () =>{
                         <Link to="/deleteCar">Remove Car</Link>
 
                         {user.isAdmin && (<>
-                            <Link to="/addUsers">Add Users</Link>
-                            <Link to="/updateUsers">Update Users</Link>
-                            <Link to="/removeUsers">Remove Users</Link>
+                            <Link to="/addUser">Add User</Link>
+                            <Link to="/updateUsers">Update User</Link>
+                            <Link to="/removeUsers">Remove User</Link>
                         </>)}
                     </li>
                 </ul>

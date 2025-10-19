@@ -10,6 +10,7 @@ import UpdateCar from './pages/UpdateCar';
 import DeleteCar from './pages/DeleteCar';
 import { AuthProvider } from './context/authContext';
 import { ProtectedRoute } from './Guard/protectedRoute';
+import AddUser from './pages/AddUser';
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(<>
@@ -24,6 +25,8 @@ createRoot(document.getElementById('root')!).render(<>
           <Route path="/addCar" element={<AddCar/>}/>
           <Route path="/updateCar" element={<UpdateCar/>}/>
           <Route path="/deleteCar" element={<DeleteCar/>}/>
+
+          <Route path="/addUser" element={<AddUser/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

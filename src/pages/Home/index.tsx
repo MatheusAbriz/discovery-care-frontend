@@ -136,7 +136,6 @@ export const Home = () => {
                         {[
                             { key: 'all', label: 'All Cars' },
                             { key: 'pickup', label: 'Pickup' },
-                            { key: 'delivery', label: 'In Delivery' },
                             { key: 'delivered', label: 'Delivered' },
                         ].map(filterOption => (
                             <button
