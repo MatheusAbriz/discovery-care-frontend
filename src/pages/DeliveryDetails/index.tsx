@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MainLayout } from '@/components/Layout/SideBar';
-import { FaCheckCircle, FaClock, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
+import { FaCheckCircle, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
 import { useApi } from '@/hooks/useAPI';
 import { getAllCars } from '@/service/carService';
 import { getAllRecipes } from '@/service/recipeService';
@@ -26,7 +26,7 @@ interface Recipe {
 }
 
 const DeliveriesDetails = () => {
-    const { data: cars, isLoading, refetch } = useApi<Car[]>({
+    const { data: cars, isLoading } = useApi<Car[]>({
         queryKey: "deliveryCars",
         queryFn: getAllCars
     })
