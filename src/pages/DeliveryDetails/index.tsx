@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MainLayout } from '@/components/Layout/SideBar';
-import { FaTruck, FaCheckCircle, FaClock, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
+import { FaCheckCircle, FaClock, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
 import { useApi } from '@/hooks/useAPI';
 import { getAllCars } from '@/service/carService';
 import { getAllRecipes } from '@/service/recipeService';
@@ -34,14 +34,14 @@ const DeliveriesDetails = () => {
         queryKey: "recipes",
         queryFn: getAllRecipes
     })
-    const [loading, setLoading] = useState(true);
     const [selectedCar, setSelectedCar] = useState<Car | null>(null);
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
 
     const getRecipeForVin = (vin: string) => {
+        if(!recipes) return undefined;
         return recipes?.find(recipe => {
-            const carData = recipe?.carData_recipe?.[0]?.car?.car;
+            const carData = recipe?.carData_recipe?.[0]?.car;
             const carVin = Array.isArray(carData) ? carData[0]?.vinCar : carData?.vinCar;
             return carVin === vin;
         });
@@ -53,25 +53,12 @@ const DeliveriesDetails = () => {
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
-    const getDeliveryStatus = (car: Car, recipeData: Recipe | undefined) => {
-        if (recipeData) {
-            const hasCustomerSignature = recipeData.customerSignature_recipe;
-            const hasDriverSignature = recipeData.driverSignature_recipe;
-            const deliveryComments = recipeData.deliveryComments_recipe;
-            if (hasCustomerSignature && hasDriverSignature) {
-                return { status: 'COMPLETED', color: 'text-green-600', bgColor: 'bg-green-100', borderColor: 'border-green-300', icon: FaCheckCircle };
-            } else if(!hasCustomerSignature && !hasDriverSignature) {
-                return { status: 'FAILED', color: 'text-red-600', bgColor: 'bg-red-100', borderColor: 'border-red-300', icon: FaExclamationTriangle };
-            }
+    const getDeliveryStatus = (car: Car) => {
+        if (car.isDelivered) {
+            return { status: 'COMPLETED', color: 'text-green-600', bgColor: 'bg-green-100', borderColor: 'border-green-300', icon: FaCheckCircle };
+        } else {
+            return { status: 'IN DELIVERY', color: 'text-red-600', bgColor: 'bg-red-100', borderColor: 'border-red-300', icon: FaExclamationTriangle };
         }
-
-        return {
-            status: car.status_car?.toUpperCase() || 'PICKUP',
-            color: 'text-gray-600',
-            bgColor: 'bg-gray-100',
-            borderColor: 'border-gray-300',
-            icon: FaClock
-        };
     };
 
     const openRecipeModal = (car: Car, recipeData: Recipe | undefined) => {
@@ -86,28 +73,24 @@ const DeliveriesDetails = () => {
         setSelectedCar(null);
     };
 
-    const availableDeliveries = cars?.filter(car => car.isDelivered);
+    const availableDeliveries = cars?.filter(car => car.isDelivered) ?? [];
 
     const getStats = () => {
         if (!cars?.length) return { total: 0, pending: 0, completed: 0, failed: 0 };
 
         const total = cars.length;
-        let pending = 0, completed = 0, failed = 0;
+        let pending = 0, completed = 0;
 
         cars.forEach(car => {
-            const recipeData = getRecipeForVin(car.vin_car);
-            const statusInfo = getDeliveryStatus(car, recipeData);
-
+            const statusInfo = getDeliveryStatus(car);
             if (statusInfo.status === 'COMPLETED') {
                 completed++;
-            } else if (statusInfo.status === 'FAILED') {
-                failed++;
             } else {
                 pending++;
             }
         });
 
-        return { total, pending, completed, failed };
+        return { total, pending, completed };
     };
 
     const stats = getStats();
@@ -136,17 +119,13 @@ const DeliveriesDetails = () => {
                                 <div className="text-3xl font-bold text-green-400">{stats.completed}</div>
                                 <div className="text-sm text-gray-300 mt-1">Completed</div>
                             </div>
-                            <div className="bg-gray-700/50 rounded-2xl p-4 border border-gray-600">
-                                <div className="text-3xl font-bold text-red-400">{stats.failed}</div>
-                                <div className="text-sm text-gray-300 mt-1">Failed</div>
-                            </div>
                         </div>
                     </div>
                 </header>
 
                 {/* Main Content */}
                 <main className="max-w-7xl mx-auto px-6 py-8">
-                    {loading ? (
+                    {isLoading && isLoadingRecipes ? (
                         <div className="bg-white rounded-3xl p-12 shadow-2xl text-center">
                             <div className="inline-flex items-center space-x-3">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
@@ -157,7 +136,7 @@ const DeliveriesDetails = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                             {availableDeliveries?.map((car) => {
                                 const recipeData = getRecipeForVin(car.vin_car);
-                                const statusInfo = getDeliveryStatus(car, recipeData);
+                                const statusInfo = getDeliveryStatus(car);
                                 const StatusIcon = statusInfo.icon;
 
                                 return (

@@ -16,4 +16,8 @@ export const LayoutContainer = styled.div`
 export const PageContent = styled.main`
   flex: 1;
   padding: 64px 24px 0 24px;
+
+  @media (max-width: 1536px) {
+    padding: 100px 32px 32px 32px;
+  }
 `

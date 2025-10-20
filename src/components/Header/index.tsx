@@ -1,12 +1,38 @@
 import { useAuth, type User } from "@/context/authContext";
 import logo from "../../assets/img/logo.png";
 import { Link, useLocation } from "react-router-dom";
-import { FaHome, FaPlus, FaEdit, FaTrash, FaUser, FaUserEdit, FaUserMinus, FaCar, FaUsers, FaCrown, FaTruck, FaChartLine, FaFileAlt } from "react-icons/fa";
+import { FaHome, FaPlus, FaEdit, FaTrash, FaUser, FaUserEdit, FaUserMinus, FaCar, FaUsers, FaCrown, FaTruck, FaChartLine, FaMapMarkedAlt, FaFileAlt, FaBars, FaTimes } from "react-icons/fa";
+import { useState, useEffect } from "react";
 
 export const Header = () => {
     const { getUser } = useAuth();
     const user: User = getUser();
     const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detect screen size - now includes laptops/notebooks
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1440);
+            if (window.innerWidth >= 1440) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [isMobileMenuOpen]);
 
     const isActive = (path: string) => location.pathname === path;
 
@@ -19,6 +45,7 @@ export const Header = () => {
 
     const deliveryMenuItems = [
         { path: "/deliveryDetails", label: "Details", icon: FaChartLine },
+        { path: "/deliveryTracking", label: "Tracking", icon: FaMapMarkedAlt },
         { path: "/deliveryReports", label: "Reports", icon: FaFileAlt }
     ];
 
@@ -28,8 +55,14 @@ export const Header = () => {
         { path: "/removeUsers", label: "Remove User", icon: FaUserMinus }
     ];
 
-    return (
-        <div className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-r border-gray-700 flex flex-col z-50">
+    const closeMobileMenu = () => {
+        if (isMobile) {
+            setIsMobileMenuOpen(false);
+        }
+    };
+
+    const SidebarContent = () => (
+        <>
             {/* Logo Section */}
             <div className="p-6 border-b border-gray-700 bg-gray-800/50">
                 <div className="flex items-center justify-center mb-3">
@@ -71,6 +104,7 @@ export const Header = () => {
                                 <li key={item.path}>
                                     <Link
                                         to={item.path}
+                                        onClick={closeMobileMenu}
                                         className={`
                                             flex items-center gap-3 px-4 py-3 rounded-lg
                                             transition-all duration-300 group relative overflow-hidden
@@ -80,7 +114,6 @@ export const Header = () => {
                                             }
                                         `}
                                     >
-                                        {/* Animated Background on Hover */}
                                         {!active && (
                                             <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/5 to-amber-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                                         )}
@@ -96,7 +129,6 @@ export const Header = () => {
                                             {item.label}
                                         </span>
                                         
-                                        {/* Active Indicator */}
                                         {active && (
                                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-900 rounded-r-full"></div>
                                         )}
@@ -112,7 +144,7 @@ export const Header = () => {
                     <div className="flex items-center gap-2 px-3 mb-3">
                         <FaTruck className="text-blue-400 text-sm" />
                         <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider">
-                            Deliveries Details
+                            Delivery Insights
                         </h3>
                     </div>
                     <ul className="space-y-1">
@@ -124,6 +156,7 @@ export const Header = () => {
                                 <li key={item.path}>
                                     <Link
                                         to={item.path}
+                                        onClick={closeMobileMenu}
                                         className={`
                                             flex items-center gap-3 px-4 py-3 rounded-lg
                                             transition-all duration-300 group relative overflow-hidden
@@ -133,7 +166,6 @@ export const Header = () => {
                                             }
                                         `}
                                     >
-                                        {/* Animated Background on Hover */}
                                         {!active && (
                                             <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/5 to-blue-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                                         )}
@@ -149,7 +181,6 @@ export const Header = () => {
                                             {item.label}
                                         </span>
                                         
-                                        {/* Active Indicator */}
                                         {active && (
                                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-900 rounded-r-full"></div>
                                         )}
@@ -179,6 +210,7 @@ export const Header = () => {
                                     <li key={item.path}>
                                         <Link
                                             to={item.path}
+                                            onClick={closeMobileMenu}
                                             className={`
                                                 flex items-center gap-3 px-4 py-3 rounded-lg
                                                 transition-all duration-300 group relative overflow-hidden
@@ -188,7 +220,6 @@ export const Header = () => {
                                                 }
                                             `}
                                         >
-                                            {/* Animated Background on Hover */}
                                             {!active && (
                                                 <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-purple-400/5 to-purple-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                                             )}
@@ -204,7 +235,6 @@ export const Header = () => {
                                                 {item.label}
                                             </span>
                                             
-                                            {/* Active Indicator */}
                                             {active && (
                                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-900 rounded-r-full"></div>
                                             )}
@@ -215,7 +245,63 @@ export const Header = () => {
                         </ul>
                     </div>
                 )}
-            </nav>            
-        </div>
+            </nav>
+        </>
+    );
+
+    return (
+        <>
+            {/* Mobile Header */}
+            {isMobile && (
+                <div className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50 2xl:hidden">
+                    <div className="flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-3">
+                            <img 
+                                src={logo} 
+                                alt="Discovery Care Logo" 
+                                width="40" 
+                                height="40" 
+                                className="rounded-full border-2 border-amber-400"
+                            />
+                            <div>
+                                <h2 className="text-amber-400 font-bold text-sm">Discovery Care</h2>
+                                <p className="text-gray-400 text-xs">Admin Panel</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="w-10 h-10 bg-amber-400 hover:bg-amber-500 rounded-lg flex items-center justify-center transition-colors duration-200"
+                        >
+                            {isMobileMenuOpen ? (
+                                <FaTimes className="text-gray-900 text-xl" />
+                            ) : (
+                                <FaBars className="text-gray-900 text-xl" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Mobile Menu Overlay */}
+            {isMobile && isMobileMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40 xl:hidden"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Sidebar - Desktop (always visible) / Mobile (slide in) */}
+            <div className={`
+                fixed top-0 left-0 h-screen w-64 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-r border-gray-700 flex flex-col z-50
+                transition-transform duration-300 ease-in-out
+                ${isMobile ? (isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
+                ${isMobile ? 'mt-[60px]' : 'mt-0'}
+            `}>
+                <SidebarContent />
+            </div>
+
+            {/* Spacer for mobile to prevent content from going under fixed header */}
+            {isMobile && <div className="h-[60px]" />}
+        </>
     );
 };
