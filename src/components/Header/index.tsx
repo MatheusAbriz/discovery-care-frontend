@@ -51,8 +51,8 @@ export const Header = () => {
 
     const userMenuItems = [
         { path: "/addUser", label: "Add User", icon: FaUser },
-        { path: "/updateUsers", label: "Update User", icon: FaUserEdit },
-        { path: "/removeUsers", label: "Remove User", icon: FaUserMinus }
+        { path: "/updateUser", label: "Update User", icon: FaUserEdit },
+        { path: "/deleteUser", label: "Remove User", icon: FaUserMinus }
     ];
 
     const closeMobileMenu = () => {
@@ -193,7 +193,7 @@ export const Header = () => {
 
                 {/* User Management Section - Admin Only */}
                 {user.isAdmin && (
-                    <div className="pt-4 border-t border-gray-700">
+                    <div className="pt-4 border-t border-gray-700 min-h-[250px]">
                         <div className="flex items-center gap-2 px-3 mb-3">
                             <FaUsers className="text-purple-400 text-sm" />
                             <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider">
