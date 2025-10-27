@@ -8,8 +8,8 @@ type UserCreateDTO = {
     isAdmin : boolean;
 }
 
-export const loginUser = (email: string, password: string) => {
-    return axios.get(`${import.meta.env.VITE_API_KEY}/users/loginUsers/${email}/${password}`);
+export const loginUser = (domain_email: string, phone: string, password: string) => {
+    return axios.get(`${import.meta.env.VITE_API_KEY}/users/loginUsers/${domain_email}/${phone}/${password}`);
 }
 
 export const getUserByEmail = (email: string) => {

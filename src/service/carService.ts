@@ -11,19 +11,19 @@ type CarProps = {
     status: StatusEnums.PICKUP | StatusEnums.DELIVERY | StatusEnums.DELIVERED
 }
 
-export const getAllCars = async(): Promise<Cars[]> =>{
-    const res = await axios.get<Cars[]>(`${import.meta.env.VITE_API_KEY}/cars/getAllCars`);
+export const getAllCars = async(domain_email: string): Promise<Cars[]> =>{
+    const res = await axios.get<Cars[]>(`${import.meta.env.VITE_API_KEY}/cars/getAllCars/${domain_email}`);
     return res.data;
 }
 
-export const insertCar = (car: CarProps) =>{
-    return axios.post(`${import.meta.env.VITE_API_KEY}/cars/createCars`, car);
+export const insertCar = (domain_email: string, car: CarProps) =>{
+    return axios.post(`${import.meta.env.VITE_API_KEY}/cars/createCars/${domain_email}`, car);
 }
 
-export const updateCar = (selectedCar: string, selectedOption: string, updateCarDTO: string) => {
-    return axios.put(`${import.meta.env.VITE_API_KEY}/cars/updateCars/${selectedCar}`, { [selectedOption]: updateCarDTO });
+export const updateCar = (domain_email: string, selectedCar: string, selectedOption: string, updateCarDTO: string) => {
+    return axios.put(`${import.meta.env.VITE_API_KEY}/cars/updateCars/${domain_email}/${selectedCar}`, { [selectedOption]: updateCarDTO });
 }
 
-export const deleteCar = (selectedCar: string) =>{
-    return axios.delete(`${import.meta.env.VITE_API_KEY}/cars/deleteCars/${selectedCar}`);
+export const deleteCar = (domain_email: string, selectedCar: string) =>{
+    return axios.delete(`${import.meta.env.VITE_API_KEY}/cars/deleteCars/${domain_email}/${selectedCar}`);
 }

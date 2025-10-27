@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaPlus, FaCar, FaMapMarkerAlt, FaCalendarAlt, FaCheckCircle, FaClock, FaTruck, FaInbox, FaTrashAlt, FaEdit } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { StyledButton } from '../../globals/buttons';
@@ -24,10 +24,26 @@ export const Home = () => {
     const [filter, setFilter] = useState('all');
     const navigate = useNavigate();
     const [loadingDelete, setLoadingDelete] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [user, setUser] = useState<any>(null);
+    
+    useEffect(() => {
+        const handleData = async() =>{
+            const user = JSON.parse(localStorage.getItem('users') ?? '{}');
+            if(!user){
+                navigate('/');
+                return;
+            }
+            setUser(user);
+        }
+        handleData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const { data: cars, isLoading, refetch } = useApi<Cars[]>({
         queryKey: 'cars',
-        queryFn: getAllCars
+        queryFn: () => getAllCars(user?.domain_email),
+        shouldRunOnInit: !!user
     })
 
     const loading = useLoader(isLoading);
@@ -63,7 +79,7 @@ export const Home = () => {
     const handleDeleteCar = async(vin: string) => {
         try{
             setLoadingDelete(true);
-            await deleteCar(vin);
+            await deleteCar(user?.domain_email, vin);
             toast.success("Car deleted successfully!");
             refetch();
         }catch(err){

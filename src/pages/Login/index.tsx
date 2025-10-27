@@ -11,43 +11,29 @@ import { useForm, type FieldValues } from "react-hook-form"
 import { loginUser } from "../../service/userService"
 import toast from "react-hot-toast"
 import { generateCode } from "../../utils/utils"
-import { OTP } from "@/components/OTP"
-import { send } from "@emailjs/browser";
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/context/authContext"
 
 export const Login = () =>{
+    const navigate = useNavigate();
     const { register, formState: { errors }, handleSubmit } = useForm();
     const [isLoading, setIsLoading] = useState(false);
-    const [userData, setUserData] = useState({
-        passcode: '',
-        email: '',
-        password: '',
-        isAdmin: false
-    })
-    const [isOpen, setIsOpen] = useState(false);
     const loading = useLoader(isLoading);
+    const { login } = useAuth();
 
     const handleLogin = async(data: FieldValues) =>{
         try{
             setIsLoading(true);
-            const res = await loginUser(data.email, data.password);
+            const res = await loginUser(data.domain_email, data.phone, data.password);
             if(res.status === 200){
-                const code = generateCode();
-                setUserData({
-                    passcode: code,
-                    email: data.email,
-                    password: data.password,
-                    isAdmin: res.data
-                })
-                await send(
-                    import.meta.env.VITE_API_SERVICE_EMAIL,
-                    import.meta.env.VITE_API_TEMPLATE_EMAIL, {
-                        passcode: code,
-                        email: data.email
-                    }, {
-                        publicKey: import.meta.env.VITE_API_EMAIL_PUBLIC_KEY
-                    }
-                )
-                setIsOpen(true);
+                const userData = {
+                    domain_email: data.domain_email,
+                    phone: data.phone,
+                    isAdmin: res.data.isAdmin
+                }
+                login(userData)
+                toast.success("Logged in successfully!");
+                navigate("/adm");
             };
         }catch(err){
             toast.error("Error! Please, try again later!");
@@ -59,9 +45,6 @@ export const Login = () =>{
 
     return(
         <MainContent>
-            {isOpen ? (
-                <OTP userData={userData}/>
-            ) : (<>
                 <Card>
                     <TextTitleLarge>Login</TextTitleLarge>
                     <TextTiny>Login first to use the admin panel</TextTiny>
@@ -69,11 +52,23 @@ export const Login = () =>{
                         <Label>
                             Email
                             <Input 
-                                name="email" 
+                                name="domain_email" 
                                 register={register} 
                                 isRequired
                                 placeholder="email@gmail.com"
                                 type="email"
+                            />
+                            {errors.email && <TextError>{errors.email.message?.toString()}</TextError>}
+                        </Label>
+
+                         <Label>
+                            Phone
+                            <Input 
+                                name="phone" 
+                                register={register} 
+                                isRequired
+                                placeholder="8167039"
+                                type="text"
                             />
                             {errors.email && <TextError>{errors.email.message?.toString()}</TextError>}
                         </Label>
@@ -95,9 +90,6 @@ export const Login = () =>{
                         <Button size="lg" type="submit" className="cursor-pointer">Login</Button>
                     </form>
                 </Card>
-
-            </>)}
-
             {loading && <LoaderOverlay/>}
         </MainContent>
     )

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllCars, updateCar } from "../../service/carService";
 import { useLoader } from "../../hooks/useLoader";
 import { useApi } from "../../hooks/useAPI";
@@ -7,15 +7,20 @@ import { LoaderOverlay } from "../../components/LoaderOverlay";
 import toast from "react-hot-toast";
 import { FaCar } from "react-icons/fa";
 import { MainLayout } from "@/components/Layout/SideBar";
+import { useNavigate } from "react-router-dom";
 
 export const UpdateCar = () => {
+  const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [user, setUser] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedCar, setSelectedCar] = useState<string | null>(null);
   const [newData, setNewData] = useState("");
 
   const { data: cars, isLoading } = useApi<Cars[]>({
     queryKey: "cars",
-    queryFn: getAllCars,
+    queryFn: () => getAllCars(user?.domain_email),
+    shouldRunOnInit: !!user
   });
 
   const [loading, setLoading] = useState(false);
@@ -27,7 +32,7 @@ export const UpdateCar = () => {
 
     setLoading(true);
     try {
-      await updateCar(selectedCar!, selectedOption, newData);
+      await updateCar(user?.domain_email, selectedCar!, selectedOption, newData);
       toast.success("Car updated successfully!");
       location.reload();
       // Reset form
@@ -46,9 +51,21 @@ export const UpdateCar = () => {
     setNewData("");
   };
 
+  useEffect(() => {
+    const handleData = async () => {
+      const user = JSON.parse(localStorage.getItem("users") ?? "{}");
+      if (!user) {
+        navigate("/");
+        return;
+      }
+      setUser(user);
+    };
+    handleData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <MainLayout>
-
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-6 py-8">
         {isLoading && <LoaderOverlay />}

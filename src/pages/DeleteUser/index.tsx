@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MainLayout } from '@/components/Layout/SideBar';
 import { useApi } from '@/hooks/useAPI';
-import { getAllCars } from '@/service/carService';
 import { deleteUser, getAllUsers } from '@/service/userService';
 import toast from 'react-hot-toast';
 

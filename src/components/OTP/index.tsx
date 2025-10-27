@@ -16,7 +16,8 @@ import { useAuth } from "@/context/authContext";
 type OTPProps = {
     userData: {
         passcode: string,
-        email: string,
+        domain_email: string,
+        phone: string,
         password: string,
         isAdmin: boolean
     }

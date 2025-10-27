@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { deleteCar, getAllCars } from '../../service/carService';
 import { useApi } from '../../hooks/useAPI';
 import type { Cars } from '../Home';
@@ -7,15 +7,20 @@ import { useLoader } from '../../hooks/useLoader';
 import toast from 'react-hot-toast';
 import { FaCar } from 'react-icons/fa';
 import { MainLayout } from '@/components/Layout/SideBar';
+import { useNavigate } from 'react-router-dom';
 
 const DeleteCar = () => {
     const [selectedCar, setSelectedCar] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [user, setUser] = useState<any>(null);
 
     const { data: cars, isLoading, refetch } = useApi<Cars[]>({
         queryKey: 'cars',
-        queryFn: getAllCars
+        queryFn: () => getAllCars(user?.domain_email),
+        shouldRunOnInit: !!user
     })
 
     const loadingLoader = useLoader(loading);
@@ -23,7 +28,7 @@ const DeleteCar = () => {
     const handleDelete = async () => {
         setLoading(true);
         try {
-            await deleteCar(selectedCar!);
+            await deleteCar(user?.domain_email, selectedCar!);
             
             // Remove car from local state
             refetch();
@@ -47,6 +52,19 @@ const DeleteCar = () => {
         setSelectedCar(vinCar);
         setShowModal(true);
     };
+
+    useEffect(() => {
+            const handleData = async() =>{
+                const user = JSON.parse(localStorage.getItem('users') ?? '{}');
+                if(!user){
+                    navigate('/');
+                    return;
+                }
+                setUser(user);
+            }
+            handleData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
 
     return (
         <MainLayout>

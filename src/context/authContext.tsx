@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 export interface User{
-    email: string;
-    password: string;
+    domain_email: string;
+    phone: string;
     isAdmin: boolean;
 }
 

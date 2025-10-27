@@ -2,12 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 
 type APIProps<T> = {
     queryKey: string,
-    queryFn: () => Promise<T>
+    queryFn: () => Promise<T>,
+    shouldRunOnInit: boolean
 }
-export const useApi = <T>({queryKey, queryFn}: APIProps<T>) =>{
+export const useApi = <T>({queryKey, queryFn, shouldRunOnInit=true}: APIProps<T>) =>{
     const { data, isLoading, isError, refetch } = useQuery<T>({
         queryKey: [queryKey],
-        queryFn: queryFn
+        queryFn: queryFn,
+        enabled: shouldRunOnInit
     });
 
     return {
